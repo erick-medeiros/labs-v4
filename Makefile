@@ -1,9 +1,13 @@
 CFLAGS = -Wall -Wextra -Werror -Iinclude
 RM = rm -fr
 
-SRC_ENCODER = encoder/main.c
+SRC = shared_memory.c
 
-SRC_DECODER = decoder/main.c
+SRC_ENCODER = $(SRC)
+SRC_ENCODER += encoder/main.c
+
+SRC_DECODER = $(SRC)
+SRC_DECODER += decoder/main.c
 
 OBJ_ENCODER = $(addprefix obj/, $(SRC_ENCODER:.c=.o))
 OBJ_DECODER = $(addprefix obj/, $(SRC_DECODER:.c=.o))
