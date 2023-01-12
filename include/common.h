@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 13:50:33 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/12 12:31:47 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/12 18:50:56 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <locale.h>
 # include <stdbool.h>
 # include <stdio.h>
+# include <stdlib.h>
 # include <string.h>
 # include <sys/shm.h>
 
@@ -25,6 +26,10 @@
 # define SHM_FILENAME "Makefile"
 # define SHM_ID_CONTROL 1
 # define SHM_ID_DATA 2
+# define CHARSET_SIZE 256
+
+typedef unsigned char	t_uchar;
+typedef uint32_t		t_freq;
 
 typedef enum e_status
 {
@@ -37,8 +42,25 @@ typedef struct s_control
 	uintmax_t	total_bytes;
 }	t_control;
 
+typedef struct s_node
+{
+	t_uchar			ch;
+	t_freq			freq;
+	struct s_node	*left;
+	struct s_node	*right;
+	struct s_node	*next;
+}	t_node;
+
+typedef struct s_list
+{
+	t_node	*start;
+	int		size;
+}	t_list;
+
 void	*attach_memory_block(char *filename, int id, int size);
 bool	detach_memory_block(void *block);
 bool	destroy_memory_block(char *filename, int id);
+
+t_node	*build_tree(t_freq frequency_table[]);
 
 #endif

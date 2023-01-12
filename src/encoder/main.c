@@ -6,25 +6,25 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:19:41 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/12 12:51:53 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/12 18:56:51 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "encoder.h"
 
-int	main(void)
+int	main(int argc, char *argv[])
 {
-	char	*memory;
+	t_freq	frequency_table[CHARSET_SIZE];
+	t_node	*huffman_tree;
+	int		i;
 
-	setlocale(LC_ALL, "utf8");
-	printf("%s\n", "encoder");
-	memory = attach_memory_block(SHM_FILENAME, 1, SHM_BLOCK_SIZE);
-	if (!memory)
+	if (argc <= 1)
 		return (1);
-	strncpy(memory, "erick", SHM_BLOCK_SIZE);
-	detach_memory_block(memory);
-	memory = attach_memory_block(SHM_FILENAME, 2, SHM_BLOCK_SIZE);
-	strncpy(memory, "medeiros", SHM_BLOCK_SIZE);
-	detach_memory_block(memory);
+	setlocale(LC_ALL, "utf8");
+	memset(frequency_table, 0, CHARSET_SIZE * sizeof(t_freq));
+	i = -1;
+	while (argv[1][++i])
+		frequency_table[(t_uchar)argv[1][i]]++;
+	huffman_tree = build_tree(frequency_table);
 	return (0);
 }

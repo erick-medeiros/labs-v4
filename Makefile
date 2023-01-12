@@ -2,6 +2,7 @@ CFLAGS = -Wall -Wextra -Werror -Iinclude
 RM = rm -fr
 
 SRC = shared_memory.c
+SRC += build_tree.c
 
 SRC_ENCODER = $(SRC)
 SRC_ENCODER += encoder/main.c
