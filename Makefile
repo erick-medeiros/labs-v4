@@ -3,6 +3,7 @@ RM = rm -fr
 
 SRC = shared_memory.c
 SRC += build_tree.c
+SRC += debug.c
 
 SRC_ENCODER = $(SRC)
 SRC_ENCODER += encoder/main.c

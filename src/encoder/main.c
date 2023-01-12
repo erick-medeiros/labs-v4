@@ -6,11 +6,12 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:19:41 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/12 18:56:51 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/12 18:57:03 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "encoder.h"
+#include "debug.h"
 
 int	main(int argc, char *argv[])
 {
@@ -25,6 +26,8 @@ int	main(int argc, char *argv[])
 	i = -1;
 	while (argv[1][++i])
 		frequency_table[(t_uchar)argv[1][i]]++;
+	debug_frequency_table(frequency_table);
 	huffman_tree = build_tree(frequency_table);
+	debug_tree(huffman_tree);
 	return (0);
 }
