@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 13:50:33 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/11 16:07:02 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/12 12:31:47 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <errno.h>
 # include <inttypes.h>
+# include <locale.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <string.h>

@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:19:41 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/11 16:09:30 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/12 12:51:53 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	main(void)
 {
 	char	*memory;
 
+	setlocale(LC_ALL, "utf8");
 	printf("%s\n", "encoder");
 	memory = attach_memory_block(SHM_FILENAME, 1, SHM_BLOCK_SIZE);
 	if (!memory)
