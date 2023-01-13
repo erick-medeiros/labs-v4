@@ -1,22 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   debug.h                                            :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/12 18:30:20 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/12 20:37:52 by eandre-f         ###   ########.fr       */
+/*   Created: 2023/01/12 20:53:44 by eandre-f          #+#    #+#             */
+/*   Updated: 2023/01/12 22:20:38 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef DEBUG_H
-# define DEBUG_H
+#include "common.h"
 
-# include "common.h"
+char	*ft_strjoin(char *str1, char *str2)
+{
+	size_t	len1;
+	size_t	len2;
+	char	*ret;
 
-void	debug_frequency_table(t_freq frequency_table[]);
-void	debug_tree(t_node *root);
-void	debug_dictionary(char **dictionary);
-
-#endif
+	len1 = strlen(str1);
+	len2 = strlen(str2);
+	ret = calloc(len1 + len2 + 1, sizeof(char));
+	strcpy(ret, str1);
+	strcpy(&ret[len1], str2);
+	return (ret);
+}

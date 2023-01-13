@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/12 18:27:56 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/12 18:47:11 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/12 21:07:43 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,18 @@ void	debug_tree(t_node *root)
 	printf("\nhuffman tree:\n\n");
 	debug_tree_req(root, 0);
 	printf("\n");
+}
+
+void	debug_dictionary(char **dictionary)
+{
+	int	i;
+
+	printf("\ndictionary:\n\n");
+	i = 0;
+	while (i < CHARSET_SIZE)
+	{
+		if (dictionary[i])
+			printf("ch %d: %s\n", i, dictionary[i]);
+		++i;
+	}
 }

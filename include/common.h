@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 13:50:33 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/12 18:50:56 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/12 22:29:23 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,15 @@ bool	detach_memory_block(void *block);
 bool	destroy_memory_block(char *filename, int id);
 
 t_node	*build_tree(t_freq frequency_table[]);
+char	**generate_dictionary(t_node *root);
+
+// destroy
+
+void	destroy_tree(t_node *node);
+void	destroy_dictionary(char **dictionary);
+
+// utils
+
+char	*ft_strjoin(char *str1, char *str2);
 
 #endif

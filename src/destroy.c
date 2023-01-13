@@ -1,22 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   debug.h                                            :+:      :+:    :+:   */
+/*   destroy.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/12 18:30:20 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/12 20:37:52 by eandre-f         ###   ########.fr       */
+/*   Created: 2023/01/12 22:21:57 by eandre-f          #+#    #+#             */
+/*   Updated: 2023/01/12 22:29:12 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef DEBUG_H
-# define DEBUG_H
+#include "common.h"
 
-# include "common.h"
+void	destroy_tree(t_node *node)
+{
+	if (!node)
+		return ;
+	destroy_tree(node->left);
+	destroy_tree(node->right);
+	free(node);
+}
 
-void	debug_frequency_table(t_freq frequency_table[]);
-void	debug_tree(t_node *root);
-void	debug_dictionary(char **dictionary);
+void	destroy_dictionary(char **dictionary)
+{
+	int	i;
 
-#endif
+	i = 0;
+	while (i < CHARSET_SIZE)
+		free(dictionary[i++]);
+	free(dictionary);
+}

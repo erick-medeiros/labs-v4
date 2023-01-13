@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:19:41 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/12 18:57:03 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/12 22:29:31 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ int	main(int argc, char *argv[])
 {
 	t_freq	frequency_table[CHARSET_SIZE];
 	t_node	*huffman_tree;
+	char	**dictionary;
 	int		i;
 
 	if (argc <= 1)
@@ -29,5 +30,9 @@ int	main(int argc, char *argv[])
 	debug_frequency_table(frequency_table);
 	huffman_tree = build_tree(frequency_table);
 	debug_tree(huffman_tree);
+	dictionary = generate_dictionary(huffman_tree);
+	debug_dictionary(dictionary);
+	destroy_dictionary(dictionary);
+	destroy_tree(huffman_tree);
 	return (0);
 }
