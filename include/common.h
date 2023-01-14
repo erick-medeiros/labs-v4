@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 13:50:33 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/12 22:29:23 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/13 22:34:39 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,7 @@ void	destroy_dictionary(char **dictionary);
 // utils
 
 char	*ft_strjoin(char *str1, char *str2);
+void	set_bit(char *data, size_t bit, bool value);
+bool	get_bit(char *data, size_t bit);
 
 #endif
