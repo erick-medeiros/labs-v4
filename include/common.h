@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 13:50:33 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/13 22:34:39 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/14 09:26:37 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 # include <string.h>
 # include <sys/shm.h>
 
-# define SHM_BLOCK_SIZE 4096
 # define SHM_FILENAME "Makefile"
-# define SHM_ID_CONTROL 1
+# define SHM_ID_CTRL 1
 # define SHM_ID_DATA 2
+# define SHM_ID_FREQ 3
 # define CHARSET_SIZE 256
 
 typedef unsigned char	t_uchar;
@@ -36,11 +36,12 @@ typedef enum e_status
 	STATUS
 }	t_status;
 
-typedef struct s_control
+typedef struct s_ctrl
 {
 	t_status	status;
 	uintmax_t	total_bytes;
-}	t_control;
+	uintmax_t	total_chars;
+}	t_ctrl;
 
 typedef struct s_node
 {
@@ -56,6 +57,12 @@ typedef struct s_list
 	t_node	*start;
 	int		size;
 }	t_list;
+
+typedef struct s_text
+{
+	char	*data;
+	size_t	size;
+}	t_text;
 
 void	*attach_memory_block(char *filename, int id, int size);
 bool	detach_memory_block(void *block);
