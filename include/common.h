@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 13:50:33 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/14 09:26:37 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/14 17:17:42 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@
 # include <stdlib.h>
 # include <string.h>
 # include <sys/shm.h>
+# include <sys/stat.h>
+# include <sys/time.h>
+# include <unistd.h>
 
 # define SHM_FILENAME "Makefile"
 # define SHM_ID_CTRL 1
@@ -30,6 +33,7 @@
 
 typedef unsigned char	t_uchar;
 typedef uint32_t		t_freq;
+typedef long			t_msec;
 
 typedef enum e_status
 {
@@ -81,5 +85,6 @@ void	destroy_dictionary(char **dictionary);
 char	*ft_strjoin(char *str1, char *str2);
 void	set_bit(char *data, size_t bit, bool value);
 bool	get_bit(char *data, size_t bit);
+t_msec	timestamp_in_ms(void);
 
 #endif

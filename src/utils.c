@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/12 20:53:44 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/13 23:06:53 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/14 17:17:40 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,14 @@ char	*ft_strjoin(char *str1, char *str2)
 	strcpy(ret, str1);
 	strcpy(&ret[len1], str2);
 	return (ret);
+}
+
+t_msec	timestamp_in_ms(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
 void	set_bit(char *data, size_t bit, bool value)
