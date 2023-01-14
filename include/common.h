@@ -14,8 +14,10 @@
 # define COMMON_H
 
 # include <errno.h>
+# include <fcntl.h>
 # include <inttypes.h>
 # include <locale.h>
+# include <semaphore.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>

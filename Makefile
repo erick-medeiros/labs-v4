@@ -1,7 +1,7 @@
-CFLAGS = -Wall -Wextra -Werror -Iinclude
+CFLAGS = -Wall -Wextra -Werror -Iinclude -pthread -g
 RM = rm -fr
 
-SRC = shared_memory.c build_tree.c dictionary.c utils.c destroy.c
+SRC = shared_memory.c build_tree.c dictionary.c utils.c destroy.c semaphore.c
 SRC += debug.c
 
 SRC_ENCODER = $(SRC)
