@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/12 18:27:56 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/12 21:07:43 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/13 19:32:51 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,27 @@ void	debug_dictionary(char **dictionary)
 	while (i < CHARSET_SIZE)
 	{
 		if (dictionary[i])
-			printf("ch %d: %s\n", i, dictionary[i]);
+			printf("id %d: ch %c: %s\n", i, i, dictionary[i]);
+		++i;
+	}
+}
+
+void	print_bits(char *bytes, size_t num_bytes)
+{
+	size_t	i;
+	short	j;
+
+	i = 0;
+	while (i < num_bytes)
+	{
+		j = 8;
+		while (--j >= 0)
+		{
+			if (bytes[i] >> j & 0B00000001)
+				printf("1");
+			else
+				printf("0");
+		}
 		++i;
 	}
 }
