@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:19:41 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/14 09:27:28 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/14 19:15:16 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	fill_frequency_table(t_freq *frequency_table, char *text)
 {
 	int	i;
 
+	memset(frequency_table, 0, CHARSET_SIZE * sizeof(t_freq));
 	i = -1;
 	while (text[++i])
 		frequency_table[(t_uchar)text[i]]++;
@@ -90,19 +91,15 @@ int	main(int argc, char *argv[])
 	t_text	text;
 	t_text	encoded;
 
-	if (argc <= 1)
-		return (1);
 	setlocale(LC_ALL, "utf8");
-	memset(frequency_table, 0, CHARSET_SIZE * sizeof(t_freq));
-	text.data = argv[1];
-	text.size = strlen(text.data);
+	if (get_text(argc, argv, &text))
+		return (EXIT_FAILURE);
 	fill_frequency_table(frequency_table, text.data);
 	huffman_tree = build_tree(frequency_table);
 	dictionary = generate_dictionary(huffman_tree);
 	encoded.data = encoder(dictionary, text.data, &encoded.size);
 	save_to_shared_memory(frequency_table, &text, &encoded);
-	print_bits(encoded.data, encoded.size);
-	printf("\n");
+	free(text.data);
 	free(encoded.data);
 	destroy_dictionary(dictionary);
 	destroy_tree(huffman_tree);

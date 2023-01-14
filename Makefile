@@ -6,6 +6,7 @@ SRC += debug.c
 
 SRC_ENCODER = $(SRC)
 SRC_ENCODER += encoder/main.c
+SRC_ENCODER += encoder/get_text.c
 
 SRC_DECODER = $(SRC)
 SRC_DECODER += decoder/main.c

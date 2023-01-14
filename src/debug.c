@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/12 18:27:56 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/13 19:32:51 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/14 18:34:49 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,5 @@ void	print_bits(char *bytes, size_t num_bytes)
 		}
 		++i;
 	}
+	printf("\n");
 }
