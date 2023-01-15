@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:57:38 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/14 18:50:24 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/15 01:40:14 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,8 @@ int	get_text(int argc, char *argv[], t_text *text)
 		while (++i < argc)
 			fwrite(argv[i], sizeof(char), strlen(argv[i]), tmp_out);
 	}
-	text->data = calloc(get_file_size(tmp_out) + 1, sizeof(char));
 	text->size = get_file_size(tmp_out);
+	text->data = calloc(text->size + 1, sizeof(char));
 	copy_file_data_to_string(text->data, tmp_out);
 	fclose(tmp_out);
 	return (0);

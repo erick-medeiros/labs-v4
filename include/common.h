@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 13:50:33 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/14 17:17:42 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/15 02:42:44 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,10 @@
 # define SHM_ID_CTRL 1
 # define SHM_ID_DATA 2
 # define SHM_ID_FREQ 3
+# define SHM_ID_INFO 4
+# define SHM_ID_DECO 5
 # define CHARSET_SIZE 256
+# define SEM_NAME "/ctrl"
 
 typedef unsigned char	t_uchar;
 typedef uint32_t		t_freq;
@@ -47,7 +50,15 @@ typedef struct s_ctrl
 	t_status	status;
 	uintmax_t	total_bytes;
 	uintmax_t	total_chars;
+	uintmax_t	deco;
 }	t_ctrl;
+
+typedef struct s_info
+{
+	uintmax_t	amount_of_total_bytes;
+	uintmax_t	amount_of_compressed_bytes;
+	uintmax_t	decompression_operation_time;
+}	t_info;
 
 typedef struct s_node
 {
@@ -82,11 +93,19 @@ char	**generate_dictionary(t_node *root);
 void	destroy_tree(t_node *node);
 void	destroy_dictionary(char **dictionary);
 
+// semaphore
+
+sem_t	*new_semaphore(const char *name, unsigned int value);
+void	destroy_semaphore(const char *name, sem_t *sem);
+int		wait_ctrl_status(t_ctrl *ctrl, sem_t *sem, int wait_status);
+void	set_ctrl_status(t_ctrl *ctrl, sem_t *sem, int status);
+
 // utils
 
 char	*ft_strjoin(char *str1, char *str2);
 void	set_bit(char *data, size_t bit, bool value);
 bool	get_bit(char *data, size_t bit);
+int		mssleep(t_msec ms);
 t_msec	timestamp_in_ms(void);
 
 #endif

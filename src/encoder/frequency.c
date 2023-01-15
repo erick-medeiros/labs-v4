@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   encoder.h                                          :+:      :+:    :+:   */
+/*   frequency.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/10 13:50:29 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/15 02:37:20 by eandre-f         ###   ########.fr       */
+/*   Created: 2023/01/15 02:35:57 by eandre-f          #+#    #+#             */
+/*   Updated: 2023/01/15 02:36:14 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ENCODER_H
-# define ENCODER_H
+#include "common.h"
 
-# include "common.h"
+void	fill_frequency_table(t_freq *frequency_table, char *text)
+{
+	int	i;
 
-void	fill_frequency_table(t_freq *frequency_table, char *text);
-int		get_text(int argc, char *argv[], t_text *text);
-
-#endif
+	memset(frequency_table, 0, CHARSET_SIZE * sizeof(t_freq));
+	i = -1;
+	while (text[++i])
+		frequency_table[(t_uchar)text[i]]++;
+}
