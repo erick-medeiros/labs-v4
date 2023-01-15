@@ -6,96 +6,83 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:19:38 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/15 03:04:20 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/15 15:18:07 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "decoder.h"
 #include "debug.h"
 
-void	decoder_ch(t_node *node, char *encoded, t_text *decoded, size_t *bit)
-{
-	if (!node->left && !node->right)
-		decoded->data[decoded->size++] = node->ch;
-	else
-	{
-		if (get_bit(encoded, (*bit)++))
-			decoder_ch(node->right, encoded, decoded, bit);
-		else
-			decoder_ch(node->left, encoded, decoded, bit);
-	}
-}
-
-char	*decoder(void *encoded, size_t size, t_msec *timestamp)
+char	*decoder(char *encoded, t_info	*shm_info)
 {
 	t_node	*huffman_tree;
-	t_freq	*shm_freq;
 	t_text	decoded;
 	size_t	bit;
+	size_t	total_bits;
+	size_t	size;
 
-	shm_freq = attach_memory_block(SHM_FILENAME, SHM_ID_FREQ,
-			sizeof(t_freq) * CHARSET_SIZE);
-	huffman_tree = build_tree(shm_freq);
+	shm_info->decompression_operation_time = timestamp_in_ms();
+	total_bits = size_memory_block(SHM_FILENAME, SHM_ID_ENCODED);
+	total_bits = (total_bits * 8) - count_bits(encoded[total_bits - 1]) - 8;
+	huffman_tree = mount_huffman_tree();
+	size = 0;
+	bit = 0;
+	while (bit < total_bits)
+		decoder_count(huffman_tree, encoded, &size, &bit);
 	decoded.data = calloc(size + 1, sizeof(char));
 	decoded.size = 0;
 	bit = 0;
-	*timestamp = timestamp_in_ms();
-	while (decoded.size != size)
+	while (decoded.size < size)
 		decoder_ch(huffman_tree, encoded, &decoded, &bit);
-	*timestamp = timestamp_in_ms() - *timestamp;
+	shm_info->decompression_operation_time = timestamp_in_ms()
+		- shm_info->decompression_operation_time;
+	shm_info->amount_of_total_bytes = decoded.size;
+	shm_info->amount_of_compressed_bytes = (total_bits / 8) + 1;
 	destroy_tree(huffman_tree);
-	detach_memory_block(shm_freq);
-	destroy_memory_block(SHM_FILENAME, SHM_ID_FREQ);
 	return (decoded.data);
 }
 
-char	*decoding(t_ctrl *shm_ctrl)
+char	*decoding(char *encoded)
 {
-	char	*shm_data;
 	t_info	*shm_info;
-	char	*shm_deco;
+	char	*shm_decoded;
 	char	*decoded;
-	t_msec	timestamp;
+	size_t	bytes;
 
-	shm_ctrl = attach_memory_block(SHM_FILENAME, SHM_ID_CTRL, sizeof(t_ctrl));
-	shm_data = attach_memory_block(SHM_FILENAME, SHM_ID_DATA,
-			shm_ctrl->total_bytes);
-	decoded = decoder(shm_data, shm_ctrl->total_chars, &timestamp);
-	shm_ctrl->total_chars = strlen(decoded);
 	shm_info = attach_memory_block(SHM_FILENAME, SHM_ID_INFO, sizeof(t_info));
-	shm_deco = attach_memory_block(SHM_FILENAME, SHM_ID_DECO,
-			shm_ctrl->total_chars);
-	memcpy(shm_deco, decoded, shm_ctrl->total_chars);
-	shm_info->amount_of_total_bytes = shm_ctrl->total_chars;
-	shm_info->amount_of_compressed_bytes = shm_ctrl->total_bytes;
-	shm_info->decompression_operation_time = timestamp;
-	detach_memory_block(shm_data);
+	decoded = decoder(encoded, shm_info);
+	bytes = strlen(decoded);
+	shm_decoded = attach_memory_block(SHM_FILENAME, SHM_ID_DECODED, bytes);
+	memcpy(shm_decoded, decoded, bytes);
 	detach_memory_block(shm_info);
-	detach_memory_block(shm_deco);
-	destroy_memory_block(SHM_FILENAME, SHM_ID_DATA);
+	detach_memory_block(shm_decoded);
 	return (decoded);
 }
 
 int	main(int argc, char *argv[])
 {
 	char	*decoded;
-	sem_t	*sem;
-	t_ctrl	*shm_ctrl;
-	int		output;
+	int		*shm_status;
+	char	*shm_encoded;
+	char	*filename_d;
+	char	*filename_c;
 
 	setlocale(LC_ALL, "utf8");
-	output = -1;
-	if (argc == 3 && strcmp(argv[1], "-f") == 0)
-		output = open(argv[2], O_RDWR | O_CREAT, 0644);
-	shm_ctrl = attach_memory_block(SHM_FILENAME, SHM_ID_CTRL, sizeof(t_ctrl));
-	sem = new_semaphore(SEM_NAME, 1);
-	wait_ctrl_status(shm_ctrl, sem, 1);
-	decoded = decoding(shm_ctrl);
-	if (output > 0)
-		write(output, decoded, shm_ctrl->total_chars);
+	filename_c = get_arg_filename(argc, argv, "-c");
+	filename_d = get_arg_filename(argc, argv, "-d");
+	shm_status = attach_memory_block(SHM_FILENAME, SHM_ID_STATUS, sizeof(int));
+	wait_status(shm_status, ENCODED);
+	shm_encoded = attach_memory_block(SHM_FILENAME, SHM_ID_ENCODED, 0);
+	if (filename_c)
+		write_in_filename(filename_c, shm_encoded,
+			size_memory_block(SHM_FILENAME, SHM_ID_ENCODED));
+	decoded = decoding(shm_encoded);
+	if (filename_d)
+		write_in_filename(filename_d, decoded, strlen(decoded));
 	free(decoded);
-	set_ctrl_status(shm_ctrl, sem, 2);
-	detach_memory_block(shm_ctrl);
-	sem_close(sem);
+	set_status(shm_status, DECODED);
+	detach_memory_block(shm_status);
+	detach_memory_block(shm_encoded);
+	destroy_memory_block(SHM_FILENAME, SHM_ID_ENCODED);
 	return (0);
 }

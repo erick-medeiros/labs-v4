@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:19:41 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/15 03:06:40 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/15 14:00:20 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	*encoder(char **dictionary, char *text, size_t *amount_bytes)
 	int		j;
 	size_t	bit;
 
-	*amount_bytes = count_amount_bytes(dictionary, text);
+	*amount_bytes = count_amount_bytes(dictionary, text) + 1;
 	compressed = calloc(*amount_bytes, 1);
 	bit = 0;
 	i = -1;
@@ -50,24 +50,23 @@ void	*encoder(char **dictionary, char *text, size_t *amount_bytes)
 			++bit;
 		}
 	}
+	compressed[*amount_bytes - 1] = 0B11111111 >> bit % 8;
 	return (compressed);
 }
 
-void	save_to_shared_memory(t_freq *freq, t_text *text, t_text *encoded)
+void	save_to_shared_memory(t_freq *freq, t_text *encoded)
 {
-	t_ctrl	*shm_ctrl;
+	int		*shm_status;
 	char	*shm_data;
 	char	*shm_freq;
 
-	shm_ctrl = attach_memory_block(SHM_FILENAME, SHM_ID_CTRL, sizeof(t_ctrl));
-	shm_data = attach_memory_block(SHM_FILENAME, SHM_ID_DATA, encoded->size);
+	shm_status = attach_memory_block(SHM_FILENAME, SHM_ID_STATUS, sizeof(int));
+	shm_data = attach_memory_block(SHM_FILENAME, SHM_ID_ENCODED, encoded->size);
 	shm_freq = attach_memory_block(SHM_FILENAME, SHM_ID_FREQ,
 			sizeof(t_freq) * CHARSET_SIZE);
-	shm_ctrl->total_bytes = encoded->size;
-	shm_ctrl->total_chars = text->size;
 	memcpy(shm_data, encoded->data, encoded->size);
 	memcpy(shm_freq, freq, sizeof(t_freq) * CHARSET_SIZE);
-	detach_memory_block(shm_ctrl);
+	detach_memory_block(shm_status);
 	detach_memory_block(shm_freq);
 	detach_memory_block(shm_data);
 }
@@ -75,29 +74,27 @@ void	save_to_shared_memory(t_freq *freq, t_text *text, t_text *encoded)
 void	show_information(void)
 {
 	t_info	*shm_info;
-	char	*shm_deco;
-	t_ctrl	*shm_ctrl;
-	sem_t	*sem;
+	char	*shm_decoded;
+	int		*shm_status;
 
-	shm_ctrl = attach_memory_block(SHM_FILENAME, SHM_ID_CTRL, sizeof(t_ctrl));
-	sem = new_semaphore(SEM_NAME, 1);
-	set_ctrl_status(shm_ctrl, sem, 1);
-	wait_ctrl_status(shm_ctrl, sem, 2);
+	shm_status = attach_memory_block(SHM_FILENAME, SHM_ID_STATUS, sizeof(int));
+	set_status(shm_status, ENCODED);
+	wait_status(shm_status, DECODED);
 	shm_info = attach_memory_block(SHM_FILENAME, SHM_ID_INFO, sizeof(t_info));
-	shm_deco = attach_memory_block(SHM_FILENAME, SHM_ID_DECO, shm_ctrl->deco);
-	printf("uncompressed data:\n%s\n", shm_deco);
+	shm_decoded = attach_memory_block(SHM_FILENAME, SHM_ID_DECODED, 0);
+	printf("uncompressed data:\n%s\n", shm_decoded);
 	printf("amount of total bytes: %lu\n", shm_info->amount_of_total_bytes);
 	printf("amount of compressed bytes: %lu\n",
 		shm_info->amount_of_compressed_bytes);
 	printf("decompression operation time: %lu milliseconds\n",
 		shm_info->decompression_operation_time);
 	detach_memory_block(shm_info);
-	detach_memory_block(shm_deco);
-	detach_memory_block(shm_ctrl);
+	detach_memory_block(shm_decoded);
+	detach_memory_block(shm_status);
 	destroy_memory_block(SHM_FILENAME, SHM_ID_INFO);
-	destroy_memory_block(SHM_FILENAME, SHM_ID_DECO);
-	destroy_memory_block(SHM_FILENAME, SHM_ID_CTRL);
-	destroy_semaphore(SEM_NAME, sem);
+	destroy_memory_block(SHM_FILENAME, SHM_ID_DECODED);
+	destroy_memory_block(SHM_FILENAME, SHM_ID_STATUS);
+	unlink(SEM_NAME);
 }
 
 int	main(int argc, char *argv[])
@@ -117,7 +114,7 @@ int	main(int argc, char *argv[])
 	destroy_tree(huffman_tree);
 	encoded.data = encoder(dictionary, text.data, &encoded.size);
 	destroy_dictionary(dictionary);
-	save_to_shared_memory(frequency_table, &text, &encoded);
+	save_to_shared_memory(frequency_table, &encoded);
 	free(text.data);
 	free(encoded.data);
 	show_information();

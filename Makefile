@@ -11,6 +11,8 @@ SRC_ENCODER += encoder/get_text.c
 
 SRC_DECODER = $(SRC)
 SRC_DECODER += decoder/main.c
+SRC_DECODER += decoder/redir.c
+SRC_DECODER += decoder/decoder.c
 
 OBJ_ENCODER = $(addprefix obj/, $(SRC_ENCODER:.c=.o))
 OBJ_DECODER = $(addprefix obj/, $(SRC_DECODER:.c=.o))
@@ -25,10 +27,10 @@ $(REQUIRED_DIRS):
 obj/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-encoder: $(REQUIRED_DIRS) $(OBJ_ENCODER)
+encoder: $(REQUIRED_DIRS) $(OBJ_ENCODER) $(OBJ_DECODER)
 	$(CC) $(CFLAGS) $(OBJ_ENCODER) -o encoder
 
-decoder: $(REQUIRED_DIRS) $(OBJ_DECODER)
+decoder: $(REQUIRED_DIRS) $(OBJ_ENCODER) $(OBJ_DECODER)
 	$(CC) $(CFLAGS) $(OBJ_DECODER) -o decoder
 
 clean:

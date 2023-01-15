@@ -6,13 +6,13 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 09:15:58 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/15 00:52:16 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/15 13:55:35 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.h"
 
-sem_t	*new_semaphore(const char *name, unsigned int value)
+static sem_t	*new_semaphore(const char *name, unsigned int value)
 {
 	sem_t	*sem;
 
@@ -25,31 +25,34 @@ sem_t	*new_semaphore(const char *name, unsigned int value)
 	return (sem);
 }
 
-void	destroy_semaphore(const char *name, sem_t *sem)
+int	wait_status(int *status, int expected)
 {
-	sem_close(sem);
-	sem_unlink(name);
-}
+	sem_t	*sem;
+	int		value;
 
-int	wait_ctrl_status(t_ctrl *ctrl, sem_t *sem, int wait_status)
-{
-	int	status;
-
-	status = 0;
+	sem = new_semaphore(SEM_NAME, 1);
+	value = 0;
 	while (1)
 	{
 		sem_wait(sem);
-		status = ctrl->status;
+		value = *status;
 		sem_post(sem);
-		if (status == wait_status)
-			return (status);
+		if (value == expected)
+		{
+			sem_close(sem);
+			return (value);
+		}
 		mssleep(10);
 	}
 }
 
-void	set_ctrl_status(t_ctrl *ctrl, sem_t *sem, int status)
+void	set_status(int *status, int value)
 {
+	sem_t	*sem;
+
+	sem = new_semaphore(SEM_NAME, 1);
 	sem_wait(sem);
-	ctrl->status = status;
+	*status = value;
 	sem_post(sem);
+	sem_close(sem);
 }

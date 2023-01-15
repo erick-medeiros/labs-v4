@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 13:50:33 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/15 02:42:44 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/15 13:59:52 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@
 # include <unistd.h>
 
 # define SHM_FILENAME "Makefile"
-# define SHM_ID_CTRL 1
-# define SHM_ID_DATA 2
+# define SHM_ID_STATUS 1
+# define SHM_ID_ENCODED 2
 # define SHM_ID_FREQ 3
-# define SHM_ID_INFO 4
-# define SHM_ID_DECO 5
+# define SHM_ID_DECODED 4
+# define SHM_ID_INFO 5
 # define CHARSET_SIZE 256
-# define SEM_NAME "/ctrl"
+# define SEM_NAME "/status"
 
 typedef unsigned char	t_uchar;
 typedef uint32_t		t_freq;
@@ -42,16 +42,10 @@ typedef long			t_msec;
 
 typedef enum e_status
 {
-	STATUS
+	INIT,
+	ENCODED,
+	DECODED
 }	t_status;
-
-typedef struct s_ctrl
-{
-	t_status	status;
-	uintmax_t	total_bytes;
-	uintmax_t	total_chars;
-	uintmax_t	deco;
-}	t_ctrl;
 
 typedef struct s_info
 {
@@ -84,6 +78,7 @@ typedef struct s_text
 void	*attach_memory_block(char *filename, int id, int size);
 bool	detach_memory_block(void *block);
 bool	destroy_memory_block(char *filename, int id);
+size_t	size_memory_block(char *filename, int id);
 
 t_node	*build_tree(t_freq frequency_table[]);
 char	**generate_dictionary(t_node *root);
@@ -95,16 +90,14 @@ void	destroy_dictionary(char **dictionary);
 
 // semaphore
 
-sem_t	*new_semaphore(const char *name, unsigned int value);
-void	destroy_semaphore(const char *name, sem_t *sem);
-int		wait_ctrl_status(t_ctrl *ctrl, sem_t *sem, int wait_status);
-void	set_ctrl_status(t_ctrl *ctrl, sem_t *sem, int status);
+int		wait_status(int *status, int wait_status);
+void	set_status(int *status, int value);
 
 // utils
 
-char	*ft_strjoin(char *str1, char *str2);
 void	set_bit(char *data, size_t bit, bool value);
 bool	get_bit(char *data, size_t bit);
+int		count_bits(char c);
 int		mssleep(t_msec ms);
 t_msec	timestamp_in_ms(void);
 

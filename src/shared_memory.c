@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 14:18:13 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/11 16:10:29 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/15 11:57:59 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,14 @@ bool	destroy_memory_block(char *filename, int id)
 	if (shmid == IPC_ERROR)
 		return (false);
 	return (shmctl(shmid, IPC_RMID, NULL) != IPC_ERROR);
+}
+
+size_t	size_memory_block(char *filename, int id)
+{
+	struct shmid_ds	buf;
+	int				shmid;
+
+	shmid = get_shared_block(filename, id, 0);
+	shmctl(shmid, IPC_STAT, &buf);
+	return (buf.shm_segsz);
 }
