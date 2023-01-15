@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:19:38 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/15 02:40:17 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/15 03:04:20 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*decoder(void *encoded, size_t size, t_msec *timestamp)
 	return (decoded.data);
 }
 
-void	decoding(t_ctrl	*shm_ctrl)
+char	*decoding(t_ctrl *shm_ctrl)
 {
 	char	*shm_data;
 	t_info	*shm_info;
@@ -66,7 +66,6 @@ void	decoding(t_ctrl	*shm_ctrl)
 	shm_deco = attach_memory_block(SHM_FILENAME, SHM_ID_DECO,
 			shm_ctrl->total_chars);
 	memcpy(shm_deco, decoded, shm_ctrl->total_chars);
-	free(decoded);
 	shm_info->amount_of_total_bytes = shm_ctrl->total_chars;
 	shm_info->amount_of_compressed_bytes = shm_ctrl->total_bytes;
 	shm_info->decompression_operation_time = timestamp;
@@ -74,18 +73,27 @@ void	decoding(t_ctrl	*shm_ctrl)
 	detach_memory_block(shm_info);
 	detach_memory_block(shm_deco);
 	destroy_memory_block(SHM_FILENAME, SHM_ID_DATA);
+	return (decoded);
 }
 
-int	main(void)
+int	main(int argc, char *argv[])
 {
+	char	*decoded;
 	sem_t	*sem;
 	t_ctrl	*shm_ctrl;
+	int		output;
 
 	setlocale(LC_ALL, "utf8");
+	output = -1;
+	if (argc == 3 && strcmp(argv[1], "-f") == 0)
+		output = open(argv[2], O_RDWR | O_CREAT, 0644);
 	shm_ctrl = attach_memory_block(SHM_FILENAME, SHM_ID_CTRL, sizeof(t_ctrl));
 	sem = new_semaphore(SEM_NAME, 1);
 	wait_ctrl_status(shm_ctrl, sem, 1);
-	decoding(shm_ctrl);
+	decoded = decoding(shm_ctrl);
+	if (output > 0)
+		write(output, decoded, shm_ctrl->total_chars);
+	free(decoded);
 	set_ctrl_status(shm_ctrl, sem, 2);
 	detach_memory_block(shm_ctrl);
 	sem_close(sem);
