@@ -6,7 +6,7 @@
 /*   By: eandre-f <eandre-f@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:19:41 by eandre-f          #+#    #+#             */
-/*   Updated: 2023/01/15 02:38:00 by eandre-f         ###   ########.fr       */
+/*   Updated: 2023/01/15 03:06:40 by eandre-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	show_information(void)
 	printf("amount of total bytes: %lu\n", shm_info->amount_of_total_bytes);
 	printf("amount of compressed bytes: %lu\n",
 		shm_info->amount_of_compressed_bytes);
-	printf("decompression operation time: %lu\n",
+	printf("decompression operation time: %lu milliseconds\n",
 		shm_info->decompression_operation_time);
 	detach_memory_block(shm_info);
 	detach_memory_block(shm_deco);
